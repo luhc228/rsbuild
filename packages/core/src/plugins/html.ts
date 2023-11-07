@@ -140,6 +140,16 @@ function getTemplateParameters(
   };
 }
 
+const getTags = (entryName: string, config: NormalizedConfig) => {
+  return mergeChainedOptions({
+    defaults: [],
+    options: config.html.tags,
+    utils: {
+      entryName,
+    },
+  });
+};
+
 function getChunks(entryName: string, entryValue: string | string[]) {
   const dependOn = [];
 
@@ -151,23 +161,17 @@ function getChunks(entryName: string, entryValue: string | string[]) {
   return [...dependOn, entryName];
 }
 
-export const applyInjectTags = (api: SharedRsbuildPluginAPI) => {
+const applyInjectTags = (api: SharedRsbuildPluginAPI) => {
   api.modifyBundlerChain(async (chain, { HtmlPlugin, CHAIN_ID }) => {
     const config = api.getNormalizedConfig();
 
-    const tags = castArray(config.html.tags).filter(Boolean);
-    const tagsByEntries = _.mapValues(config.html.tagsByEntries, (tags) =>
-      castArray(tags).filter(Boolean),
-    );
-    const shouldByEntries = _.some(tagsByEntries, 'length');
-
     // skip if options is empty.
-    if (!tags.length && !shouldByEntries) {
+    if (!tags.length) {
       return;
     }
-    // dynamic import.
+
     const { HtmlTagsPlugin } = await import('@rsbuild/shared');
-    // const { HtmlTagsPlugin } = await import('../webpackPlugins/HtmlTagsPlugin');
+
     // create shared options used for entry without specified options.
     const sharedOptions: HtmlTagsPluginOptions = {
       HtmlPlugin,
@@ -175,18 +179,19 @@ export const applyInjectTags = (api: SharedRsbuildPluginAPI) => {
       hash: false,
       publicPath: true,
       tags,
+      entryName,
     };
-    // apply only one webpack plugin if `html.tagsByEntries` is empty.
-    if (tags.length && !shouldByEntries) {
+
+    if (tags.length) {
       chain
         .plugin(CHAIN_ID.PLUGIN.HTML_TAGS)
         .use(HtmlTagsPlugin, [sharedOptions]);
       return;
     }
-    // apply webpack plugin for each entries.
+
+    // apply plugin for each entries.
     for (const [entry, filename] of Object.entries(api.getHTMLPaths())) {
       const opts = { ...sharedOptions, includes: [filename] };
-      entry in tagsByEntries && (opts.tags = tagsByEntries[entry]);
       chain
         .plugin(`${CHAIN_ID.PLUGIN.HTML_TAGS}#${entry}`)
         .use(HtmlTagsPlugin, [opts]);
@@ -263,6 +268,8 @@ export const pluginHtml = (): DefaultRsbuildPlugin => ({
                 pluginOptions.favicon = favicon;
               }
             }
+
+            const tags = getTags(entryName, config);
 
             const finalOptions = mergeChainedOptions({
               defaults: pluginOptions,
@@ -351,7 +358,5 @@ export const pluginHtml = (): DefaultRsbuildPlugin => ({
 
     api.onBeforeBuild(emitRouteJson);
     api.onBeforeStartDevServer(emitRouteJson);
-
-    applyInjectTags(api);
   },
 });

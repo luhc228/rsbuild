@@ -1,4 +1,9 @@
-import type { MetaOptions, ScriptInject } from '@rsbuild/shared';
+import type {
+  ArrayOrNot,
+  MetaOptions,
+  ScriptInject,
+  HtmlInjectTagDescriptor,
+} from '@rsbuild/shared';
 import type { RsbuildConfig as RsbuildRspackConfig } from '@rsbuild/core/rspack-provider';
 import type { RsbuildConfig as RsbuildWebpackConfig } from '@rsbuild/webpack';
 
@@ -56,6 +61,10 @@ export type UniBuilderExtraConfig = {
      * @deprecated use `html.templateParameters` instead
      */
     templateParametersByEntries?: Record<string, Record<string, unknown>>;
+    /**
+     * @deprecated use `html.tags` instead
+     */
+    tagsByEntries?: Record<string, ArrayOrNot<HtmlInjectTagDescriptor>>;
   };
 };
 

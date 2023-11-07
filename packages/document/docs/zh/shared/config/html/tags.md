@@ -3,10 +3,10 @@
 
 添加和修改最终注入到 HTML 页面的标签。
 
-#### 对象形式
+### 对象形式
 
 ```ts
-export interface HtmlInjectTag {
+interface HtmlInjectTag {
   tag: string;
   attrs?: Record<string, string | boolean | null | undefined>;
   children?: string;
@@ -70,7 +70,7 @@ export default {
 
 用户也可以向这两个配置传入函数，以自行控制路径拼接的逻辑。
 
-#### 函数形式
+### 函数形式
 
 ```ts
 export type HtmlInjectTagUtils = {
@@ -143,7 +143,7 @@ export default {
 </html>
 ```
 
-#### 限制
+### 限制
 
 这个配置用于在 Rsbuild 构建完成后修改 HTML 产物的内容，并不会引入和解析新的模块。因此，它无法用于引入未编译的源码文件，也无法代替 [source.preEntry](https://rsbuild.dev/zh/config/options/source.html#source.preentry) 等配置。
 
@@ -154,10 +154,10 @@ web-app
 ├── src
 │   ├── index.tsx
 │   └── polyfill.ts
-└── modern.config.ts
+└── rsbuild.config.ts
 ```
 
-```ts title="modern.config.ts"
+```ts title="rsbuild.config.ts"
 export default {
   output: {
     assetPrefix: '//example.com/',
@@ -189,10 +189,10 @@ web-app
 │   └── index.tsx
 ├── public
 │   └── service-worker.js
-└── modern.config.ts
+└── rsbuild.config.ts
 ```
 
-```ts title="modern.config.ts"
+```ts title="rsbuild.config.ts"
 function report() {
   fetch('https://www.example.com/report');
 }

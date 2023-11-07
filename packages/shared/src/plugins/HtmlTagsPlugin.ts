@@ -1,14 +1,15 @@
 import _ from 'lodash';
+import { withPublicPath } from '../url';
 import type HtmlWebpackPlugin from 'html-webpack-plugin';
 import type { Compiler } from '@rspack/core';
-import { withPublicPath } from '../url';
-import {
+import type {
   HtmlInjectTag,
   HtmlInjectTagDescriptor,
   HtmlInjectTagUtils,
 } from '../types';
 
 export interface HtmlTagsPluginOptions {
+  entryName: string;
   hash?: HtmlInjectTag['hash'];
   publicPath?: HtmlInjectTag['publicPath'];
   append?: HtmlInjectTag['append'];
@@ -176,6 +177,7 @@ export class HtmlTagsPlugin {
           outputName: params.outputName,
           publicPath: params.publicPath,
           hash: compilationHash,
+          entryName: this.ctx.entryName,
         };
         for (const handler of handlers) {
           tags = handler(tags, utils) || tags;

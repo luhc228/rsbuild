@@ -3,10 +3,10 @@
 
 Modifies the tags that are injected into the HTML page.
 
-#### Tag Object
+### Tag Object
 
 ```ts
-export interface HtmlInjectTag {
+interface HtmlInjectTag {
   tag: string;
   attrs?: Record<string, string | boolean | null | undefined>;
   children?: string;
@@ -39,7 +39,6 @@ export default {
         head: true,
         append: true,
         publicPath: true,
-        hash: true,
       },
     ],
   },
@@ -70,7 +69,7 @@ And the `hash` field causes the filename to be followed by an additional hash qu
 
 You can also pass functions to those fields to control the path joining.
 
-#### Tags Handler
+### Tags Handler
 
 ```ts
 export type HtmlInjectTagUtils = {
@@ -142,7 +141,7 @@ So the end product will look like:
 </html>
 ```
 
-#### Limitation
+### Limitation
 
 This configuration is used to modify the content of HTML files after Rsbuild completes building, and does not resolve or parse new modules. It cannot be used to import uncompiled source code files. Also cannot replace configurations such as [source.preEntry](https://rsbuild.dev/config/options/source.html#source.preentry).
 
@@ -153,10 +152,10 @@ web-app
 ├── src
 │   ├── index.tsx
 │   └── polyfill.ts
-└── modern.config.ts
+└── rsbuild.config.ts
 ```
 
-```ts title="modern.config.ts"
+```ts title="rsbuild.config.ts"
 export default {
   output: {
     assetPrefix: '//example.com/',
@@ -188,10 +187,10 @@ web-app
 │   └── index.tsx
 ├── public
 │   └── service-worker.js
-└── modern.config.ts
+└── rsbuild.config.ts
 ```
 
-```ts title="modern.config.ts"
+```ts title="rsbuild.config.ts"
 function report() {
   fetch('https://www.example.com/report');
 }
