@@ -6,11 +6,17 @@ import type { RsbuildPlugin } from '../../types';
 export const pluginTransition = (): RsbuildPlugin => ({
   name: 'rsbuild:transition',
 
-  setup() {
+  setup(api) {
     process.env.RSPACK_CONFIG_VALIDATE = 'loose-silent';
 
     // improve kill process performance
     // https://github.com/web-infra-dev/rspack/pull/5486
     process.env.WATCHPACK_WATCHER_LIMIT ||= '20';
+
+    api.modifyRspackConfig((config) => {
+      config.experiments ??= {};
+      config.experiments.rspackFuture ??= {};
+      config.experiments.rspackFuture.newTreeshaking ??= true;
+    });
   },
 });
